@@ -1,0 +1,24 @@
+{
+  "name": "portfolio-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contact form backend for the portfolio site — forwards submissions to Telegram. Runs as a Yandex Cloud Function (Hono).",
+  "author": "Daniel Rassomakhin",
+  "scripts": {
+    "dev": "tsx watch src/dev.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/index.js",
+    "package": "npm run build && cd dist && zip -r ../function.zip index.js",
+    "deploy": "npm run package && bash scripts/deploy.sh"
+  },
+  "dependencies": {
+    "hono": "^4.6.14"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@types/node": "^22.10.2",
+    "esbuild": "^0.24.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
