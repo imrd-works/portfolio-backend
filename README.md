@@ -105,7 +105,9 @@ yc serverless function allow-unauthenticated-invoke portfolio-contact
 VITE_CONTACT_API_URL=https://functions.yandexcloud.net/<function-id>
 ```
 
-`sendContactRequest` шлёт `POST` на `${VITE_CONTACT_API_URL}/contact`. Если переменная не задана — форма работает в демо-режиме (как раньше, без реальной отправки).
+`sendContactRequest` шлёт `POST` прямо на этот URL — **без** добавления `/contact`. У прямого URL Yandex Cloud Function путь не поддерживается (всё после хоста считается id функции), поэтому функция обрабатывает корень `/` сама. Если переменная не задана — форма работает в демо-режиме.
+
+> Если позже поставишь перед функцией **API Gateway**, у тебя появятся нормальные пути — тогда укажи `VITE_CONTACT_API_URL=https://<gateway>/contact`. Бэкенд готов к обоим вариантам.
 
 ---
 
