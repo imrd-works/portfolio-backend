@@ -1,7 +1,8 @@
 import { config } from './config.js'
-import type { CleanPayload } from './validation.js'
+import { isEmail, toTelegramHandle, type CleanPayload } from './validation.js'
 
-// Escape the five characters that are special in Telegram's HTML parse mode.
+// Escape the characters that are special in Telegram's HTML parse mode (outside
+// attributes these three are all of them).
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -9,18 +10,21 @@ function escapeHtml(value: string): string {
     .replace(/>/g, '&gt;')
 }
 
-export function formatMessage(payload: CleanPayload): string {
-  const name = escapeHtml(payload.name)
-  const contact = escapeHtml(payload.contact)
-  const message = escapeHtml(payload.message)
+/** The contact as a link to answer with in one tap: a mail, or a Telegram chat. */
+function contactLink(contact: string): string {
+  if (isEmail(contact)) return `<a href="mailto:${escapeHtml(contact)}">${escapeHtml(contact)}</a>`
+  const handle = toTelegramHandle(contact)
+  return `<a href="https://t.me/${escapeHtml(handle)}">@${escapeHtml(handle)}</a>`
+}
 
+export function formatMessage(payload: CleanPayload): string {
   return [
-    '🔔 <b>New portfolio request</b>',
+    '🔔 <b>Новое письмо с портфолио</b>',
     '',
-    `👤 <b>Name:</b> ${name}`,
-    `✉️ <b>Contact:</b> ${contact}`,
-    '📝 <b>Message:</b>',
-    message,
+    `👤 <b>Имя:</b> ${escapeHtml(payload.name)}`,
+    `✉️ <b>Контакт:</b> ${contactLink(payload.contact)}`,
+    '',
+    escapeHtml(payload.message),
   ].join('\n')
 }
 

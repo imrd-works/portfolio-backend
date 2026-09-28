@@ -26,12 +26,16 @@ export interface ValidationResult {
   value: CleanPayload
 }
 
-function toTelegramHandle(value: string): string {
+export function toTelegramHandle(value: string): string {
   return value
     .trim()
     .toLowerCase()
     .replace(/^(?:https?:\/\/)?t\.me\//i, '')
     .replace(/^@/, '')
+}
+
+export function isEmail(value: string): boolean {
+  return EMAIL_RE.test(value)
 }
 
 function isEmailOrTelegram(value: string): boolean {
@@ -61,7 +65,8 @@ export function validateContact(input: unknown): ValidationResult {
 
   const errors: FieldErrors = {}
 
-  if (name.length < 3 || name.length > MAX_NAME || !NAME_RE.test(name)) {
+  // two letters are a name (Ян, Li): the same rule as the site's form
+  if (name.length < 2 || name.length > MAX_NAME || !NAME_RE.test(name)) {
     errors.name = 'errorName'
   }
 

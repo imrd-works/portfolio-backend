@@ -42,7 +42,7 @@ npm run dev            # http://localhost:3000
 | -------------------- | --------------------------------------------------------------------- |
 | `TELEGRAM_BOT_TOKEN` | Токен от BotFather                                                    |
 | `TELEGRAM_CHAT_ID`   | Твой chat_id, куда летят заявки                                       |
-| `ALLOWED_ORIGIN`     | Origin сайта (напр. `https://daniel.ru`); список через запятую или `*` |
+| `ALLOWED_ORIGIN`     | Origin сайта: `https://rassomakhin.com,https://www.rassomakhin.com` (список через запятую) или `*` |
 | `OWNER_EMAIL`        | Твоя почта — её запрещено вводить в форму                             |
 | `OWNER_TELEGRAM`     | Твой Telegram (`@IIMRD`) — тоже запрещён к вводу                      |
 | `PORT`               | Только для локального `npm run dev`                                  |
