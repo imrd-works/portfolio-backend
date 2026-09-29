@@ -42,12 +42,19 @@ npm run dev            # http://localhost:3000
 | -------------------- | --------------------------------------------------------------------- |
 | `TELEGRAM_BOT_TOKEN` | Токен от BotFather                                                    |
 | `TELEGRAM_CHAT_ID`   | Твой chat_id, куда летят заявки                                       |
+| `TELEGRAM_API_BASE`  | Необязательно: адрес посредника к Telegram API (из дата-центров Yandex Cloud в РФ `api.telegram.org` не отвечает) |
+| `TELEGRAM_RELAY_SECRET` | Необязательно: секрет, который посредник проверяет в заголовке `X-Relay-Secret` |
+| `SMTP_USER`          | Почта, с которой уходит письмо (Яндекс Почта: `imld.works@yandex.ru`) |
+| `SMTP_PASS`          | Пароль приложения для почты (id.yandex.ru → Безопасность → Пароли приложений) |
+| `SMTP_HOST`, `SMTP_PORT`, `MAIL_TO` | Необязательно: по умолчанию `smtp.yandex.ru`, `465` и сам `SMTP_USER` |
 | `ALLOWED_ORIGIN`     | Origin сайта: `https://rassomakhin.com,https://www.rassomakhin.com` (список через запятую) или `*` |
 | `OWNER_EMAIL`        | Твоя почта — её запрещено вводить в форму                             |
 | `OWNER_TELEGRAM`     | Твой Telegram (`@IIMRD`) — тоже запрещён к вводу                      |
 | `PORT`               | Только для локального `npm run dev`                                  |
 
 В Yandex Cloud эти значения задаются в настройках функции (см. ниже), а не в `.env`.
+
+Письмо уходит сразу двумя путями — в Telegram и на почту. Заявка считается доставленной, если дошла хоть куда-то; настроен может быть и один путь.
 
 ---
 
@@ -90,7 +97,7 @@ yc serverless function allow-unauthenticated-invoke portfolio-contact
 1. Cloud Functions → **Создать функцию** → runtime **Node.js 18**.
 2. Загрузи `function.zip`, точка входа — `index.handler`.
 3. Memory 128 МБ, таймаут 10 с.
-4. Во вкладке **Переменные окружения** добавь `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `ALLOWED_ORIGIN`, `OWNER_EMAIL`, `OWNER_TELEGRAM`.
+4. Во вкладке **Переменные окружения** добавь переменные из таблицы выше (Telegram, почта, `ALLOWED_ORIGIN`, `OWNER_*`).
 5. Сделай функцию **публичной** (разрешить вызов без авторизации) и скопируй её URL.
 
 > Оплата Yandex Cloud — в рублях, картой РФ. Для одной формы расход около нуля (есть бесплатный грант).

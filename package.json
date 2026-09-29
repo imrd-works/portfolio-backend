@@ -2,7 +2,7 @@
   "name": "portfolio-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "Contact form backend for the portfolio site — forwards submissions to Telegram. Runs as a Yandex Cloud Function (Hono).",
+  "description": "Contact form backend for the portfolio site — forwards submissions to Telegram and by mail. Runs as a Yandex Cloud Function (Hono).",
   "author": "Daniel Rassomakhin",
   "scripts": {
     "dev": "tsx watch src/dev.ts",
@@ -12,11 +12,13 @@
     "deploy": "npm run package && bash scripts/deploy.sh"
   },
   "dependencies": {
-    "hono": "^4.6.14"
+    "hono": "^4.6.14",
+    "nodemailer": "^6.10.1"
   },
   "devDependencies": {
     "@hono/node-server": "^1.13.7",
     "@types/node": "^22.10.2",
+    "@types/nodemailer": "^6.4.24",
     "esbuild": "^0.24.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"

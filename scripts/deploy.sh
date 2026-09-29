@@ -5,8 +5,8 @@
 # Usage:
 #   FUNCTION_NAME=portfolio-contact bash scripts/deploy.sh
 #
-# Environment variables (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, ALLOWED_ORIGIN,
-# OWNER_EMAIL, OWNER_TELEGRAM) are read from your current shell / .env.
+# Environment variables (TELEGRAM_*, SMTP_*, MAIL_TO, ALLOWED_ORIGIN, OWNER_*) are
+# read from your current shell / .env: see .env.example.
 set -euo pipefail
 
 FUNCTION_NAME="${FUNCTION_NAME:-portfolio-contact}"
@@ -38,7 +38,14 @@ yc serverless function version create \
   --environment TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID:?set TELEGRAM_CHAT_ID}" \
   --environment ALLOWED_ORIGIN="${ALLOWED_ORIGIN:-*}" \
   --environment OWNER_EMAIL="${OWNER_EMAIL:-}" \
-  --environment OWNER_TELEGRAM="${OWNER_TELEGRAM:-}"
+  --environment OWNER_TELEGRAM="${OWNER_TELEGRAM:-}" \
+  --environment TELEGRAM_API_BASE="${TELEGRAM_API_BASE:-https://api.telegram.org}" \
+  --environment TELEGRAM_RELAY_SECRET="${TELEGRAM_RELAY_SECRET:-}" \
+  --environment SMTP_USER="${SMTP_USER:-}" \
+  --environment SMTP_PASS="${SMTP_PASS:-}" \
+  --environment SMTP_HOST="${SMTP_HOST:-smtp.yandex.ru}" \
+  --environment SMTP_PORT="${SMTP_PORT:-465}" \
+  --environment MAIL_TO="${MAIL_TO:-}"
 
 echo
 echo "Deployed. To allow public (unauthenticated) calls, run once:"

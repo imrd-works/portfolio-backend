@@ -29,15 +29,19 @@ export function formatMessage(payload: CleanPayload): string {
 }
 
 export async function sendTelegramMessage(text: string): Promise<void> {
-  const url = `https://api.telegram.org/bot${config.botToken}/sendMessage`
+  const url = `${config.telegramApi}/bot${config.botToken}/sendMessage`
 
+  // the mail goes at the same time, so a Telegram that does not answer is not waited on long
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 7000)
+  const timer = setTimeout(() => controller.abort(), 5000)
 
   try {
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(config.relaySecret ? { 'X-Relay-Secret': config.relaySecret } : {}),
+      },
       body: JSON.stringify({
         chat_id: config.chatId,
         text,
@@ -54,7 +58,7 @@ export async function sendTelegramMessage(text: string): Promise<void> {
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error(
-        'Telegram request timed out — the function likely has no internet egress (check its network / NAT settings)'
+        `Telegram request to ${config.telegramApi} timed out — unreachable from here (api.telegram.org is blocked from Yandex Cloud's Russian data centres: set TELEGRAM_API_BASE to a relay), or the function has no internet egress`
       )
     }
     throw error

@@ -1,8 +1,9 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { config } from './config.js'
+import { config, mailReady, telegramReady } from './config.js'
 import { validateContact } from './validation.js'
 import { formatMessage, sendTelegramMessage } from './telegram.js'
+import { sendMail } from './mail.js'
 import type { Context } from 'hono'
 
 const app = new Hono()
@@ -45,10 +46,20 @@ async function handleContact(c: Context) {
     return c.json({ ok: false, errors }, 422)
   }
 
-  try {
-    await sendTelegramMessage(formatMessage(value))
-  } catch (error) {
-    console.error('[contact] failed to deliver:', error)
+  // Both ways at once, Telegram and mail: the letter is delivered if either one takes it.
+  const ways: [string, () => Promise<void>][] = []
+  if (telegramReady()) ways.push(['telegram', () => sendTelegramMessage(formatMessage(value))])
+  if (mailReady()) ways.push(['mail', () => sendMail(value)])
+  if (!ways.length) {
+    console.error('[contact] no way to deliver: neither Telegram nor mail is configured')
+    return c.json({ ok: false, error: 'DELIVERY_FAILED' }, 502)
+  }
+
+  const results = await Promise.allSettled(ways.map(([, send]) => send()))
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') console.error(`[contact] ${ways[i][0]} failed:`, r.reason)
+  })
+  if (!results.some((r) => r.status === 'fulfilled')) {
     return c.json({ ok: false, error: 'DELIVERY_FAILED' }, 502)
   }
 
